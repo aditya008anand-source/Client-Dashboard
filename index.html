@@ -6,13 +6,12 @@
 <title>Mysaathi Client Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   :root {
     --bg: #f0f4f5;
     --surface: #ffffff;
-    --surface-2: #f7fafa;
     --border: #e2eaec;
     --border-strong: #c8d8dc;
     --text: #0d2329;
@@ -22,7 +21,6 @@
     --primary-light: #d8eef1;
     --primary-dark: #085f70;
     --accent: #0fa893;
-    --accent-light: #d5f0ec;
     --success: #2a9d47;
     --success-light: #e2f5e8;
     --warning: #d4860f;
@@ -31,281 +29,176 @@
     --danger-light: #fce8e6;
     --neutral: #607d85;
     --neutral-light: #e8f0f2;
+    --purple: #7c3aed;
+    --purple-light: #ede9fe;
+    --orange: #ea580c;
+    --orange-light: #fff0e6;
     --radius-lg: 16px;
     --radius-md: 12px;
     --radius-sm: 8px;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: 'Inter', system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    font-size: 14px;
-    line-height: 1.55;
-    -webkit-font-smoothing: antialiased;
-  }
+  body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
 
-  /* ── TOPBAR ── */
-  .topbar {
-    background: var(--primary-dark);
-    padding: 0 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 56px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 8px rgba(8,63,80,.18);
-  }
-  .topbar-brand {
-    display: flex; align-items: center; gap: 12px;
-  }
-  .topbar-logo {
-    width: 32px; height: 32px; border-radius: 8px;
-    background: linear-gradient(135deg, #22c5b0 0%, #0b7285 100%);
-    display: grid; place-items: center;
-    font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; color: #fff;
-  }
-  .topbar-name {
-    font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600;
-    color: #fff; letter-spacing: -0.01em;
-  }
-  .topbar-sub { font-size: 11px; color: rgba(255,255,255,.55); margin-top: 1px; }
-  .topbar-right { display: flex; align-items: center; gap: 10px; }
-  .sync-pill {
-    display: flex; align-items: center; gap: 7px;
-    background: rgba(255,255,255,.1);
-    border: 1px solid rgba(255,255,255,.15);
-    border-radius: 999px;
-    padding: 5px 12px;
-    font-size: 12px;
-    color: rgba(255,255,255,.8);
-    cursor: pointer;
-    transition: background .15s;
-  }
+  /* TOPBAR */
+  .topbar { background: var(--primary-dark); padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(8,63,80,.2); }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-logo { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, #22c5b0, #0b7285); display: grid; place-items: center; font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; color: #fff; }
+  .brand-name { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; color: #fff; letter-spacing: -.01em; }
+  .brand-sub { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 1px; }
+  .sync-pill { display: flex; align-items: center; gap: 7px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15); border-radius: 999px; padding: 5px 13px; font-size: 12px; color: rgba(255,255,255,.8); cursor: pointer; transition: background .15s; }
   .sync-pill:hover { background: rgba(255,255,255,.18); }
-  .sync-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: #4ade80;
-    box-shadow: 0 0 0 2.5px rgba(74,222,128,.25);
-    animation: blink 2.5s ease-in-out infinite;
-  }
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 0 2.5px rgba(74,222,128,.25); animation: blink 2.5s ease-in-out infinite; }
   .sync-dot.err { background: #f87171; box-shadow: 0 0 0 2.5px rgba(248,113,113,.25); }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+  @keyframes blink { 0%,100%{opacity:1}50%{opacity:.35} }
 
-  /* ── TABS ── */
-  .tabs-row {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 32px;
-    display: flex;
-    gap: 0;
-  }
-  .tab-btn {
-    padding: 14px 22px;
-    font-family: inherit; font-size: 13.5px; font-weight: 500;
-    color: var(--text-muted);
-    border: none; background: transparent; cursor: pointer;
-    border-bottom: 2.5px solid transparent;
-    transition: color .15s, border-color .15s;
-    position: relative; top: 1px;
-  }
+  /* TABS */
+  .tabs-row { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; }
+  .tab-btn { padding: 14px 22px; font-family: inherit; font-size: 13.5px; font-weight: 500; color: var(--text-muted); border: none; background: transparent; cursor: pointer; border-bottom: 2.5px solid transparent; transition: color .15s, border-color .15s; position: relative; top: 1px; }
   .tab-btn:hover { color: var(--text); }
   .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
 
-  /* ── MAIN ── */
-  .main { max-width: 1300px; margin: 0 auto; padding: 24px 32px 64px; }
-
-  /* ── FILTER BAR ── */
-  .filter-bar {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 16px 20px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    gap: 16px;
-    margin-bottom: 20px;
-  }
-  .fg { display: flex; flex-direction: column; gap: 5px; }
-  .fg label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-soft); }
-  .fg select {
-    font-family: inherit; font-size: 13px; color: var(--text);
-    background: var(--bg);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-sm);
-    padding: 9px 36px 9px 12px;
-    min-width: 190px;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%23517a85' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    transition: border-color .15s, box-shadow .15s;
-  }
-  .fg select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
-  .filter-count { margin-left: auto; text-align: right; }
-  .filter-count span { display: block; font-size: 11.5px; color: var(--text-muted); }
-  .filter-count strong { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; color: var(--text); line-height: 1; }
-
-  /* ── KPI GRID ── */
-  .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
-  .kpi {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 20px 22px 18px;
-    position: relative; overflow: hidden;
-    transition: box-shadow .2s;
-  }
-  .kpi:hover { box-shadow: 0 4px 18px rgba(11,114,133,.08); }
-  .kpi-accent {
-    position: absolute; top: 0; left: 0;
-    width: 100%; height: 3px;
-    background: var(--kpi-color, var(--primary));
-  }
-  .kpi-icon {
-    width: 36px; height: 36px; border-radius: 10px;
-    background: var(--kpi-bg, var(--primary-light));
-    display: grid; place-items: center;
-    font-size: 17px; margin-bottom: 14px;
-  }
-  .kpi-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--text-soft); margin-bottom: 6px; }
-  .kpi-value { font-family: 'Fraunces', serif; font-size: 38px; font-weight: 600; color: var(--text); line-height: 1; letter-spacing: -.02em; }
-  .kpi-sub { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
-  .kpi-badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 999px;
-    background: var(--kpi-bg, var(--primary-light));
-    color: var(--kpi-color, var(--primary));
-    margin-top: 6px;
-  }
-  .kpi.k-total { --kpi-color: var(--primary); --kpi-bg: var(--primary-light); }
-  .kpi.k-active { --kpi-color: var(--success); --kpi-bg: var(--success-light); }
-  .kpi.k-inactive { --kpi-color: var(--neutral); --kpi-bg: var(--neutral-light); }
-  .kpi.k-delivered { --kpi-color: var(--success); --kpi-bg: var(--success-light); }
-  .kpi.k-pending { --kpi-color: var(--warning); --kpi-bg: var(--warning-light); }
-
-  /* ── CARDS ROW ── */
-  .cards-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 22px 24px;
-  }
-  .card-title { font-family: 'Fraunces', serif; font-size: 15.5px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
-  .card-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; }
-
-  /* ── STATUS LIST ── */
-  .status-list { display: flex; flex-direction: column; gap: 13px; }
-  .si { display: grid; grid-template-columns: 12px 1fr auto; gap: 13px; align-items: center; }
-  .si-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c, var(--primary)); box-shadow: 0 0 0 3px var(--cb, var(--primary-light)); }
-  .si.s-active   { --c: var(--success);  --cb: var(--success-light); }
-  .si.s-inactive { --c: var(--neutral);  --cb: var(--neutral-light); }
-  .si.s-delivered{ --c: var(--success);  --cb: var(--success-light); }
-  .si.s-pending  { --c: var(--warning);  --cb: var(--warning-light); }
-  .si.s-rto      { --c: var(--danger);   --cb: var(--danger-light);  }
-  .si.s-other    { --c: var(--neutral);  --cb: var(--neutral-light); }
-  .si-mid { display: flex; flex-direction: column; gap: 5px; }
-  .si-name { font-size: 13px; font-weight: 500; color: var(--text); }
-  .si-bar { height: 5px; background: var(--bg); border-radius: 3px; overflow: hidden; }
-  .si-bar-fill { height: 100%; background: var(--c, var(--primary)); border-radius: 3px; transition: width .55s cubic-bezier(.4,.1,.2,1); }
-  .si-right { text-align: right; min-width: 88px; }
-  .si-count { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; line-height: 1; }
-  .si-pct { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-
-  /* sub-section inside card */
-  .sub-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--text-soft); margin: 14px 0 8px 26px; }
-  .sub-indent { padding-left: 26px; border-left: 2px solid var(--border); margin-left: 4px; }
-
-  /* ── CHART / BREAKDOWN ── */
-  .breakdown { display: grid; grid-template-columns: 200px 1fr; gap: 24px; align-items: center; }
-  .chart-box { position: relative; height: 200px; }
-  @media (max-width: 680px) { .breakdown { grid-template-columns: 1fr; } }
-
-  /* ── QR LIST ── */
-  .qr-list { display: flex; flex-direction: column; gap: 11px; max-height: 220px; overflow-y: auto; padding-right: 3px; }
-  .qr-list::-webkit-scrollbar { width: 4px; }
-  .qr-list::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 8px; }
-  .qr-row { display: grid; grid-template-columns: 10px 1fr auto; gap: 11px; align-items: center; }
-  .qr-sw { width: 10px; height: 10px; border-radius: 3px; background: var(--sw, #0b7285); flex-shrink: 0; }
-  .qr-mid { display: flex; flex-direction: column; gap: 4px; }
-  .qr-name { font-size: 12.5px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
-  .qr-bar { height: 4px; background: var(--bg); border-radius: 2px; overflow: hidden; }
-  .qr-bar-fill { height: 100%; background: var(--sw, #0b7285); border-radius: 2px; transition: width .5s ease; }
-  .qr-right { text-align: right; white-space: nowrap; }
-  .qr-n { font-family: 'Fraunces', serif; font-size: 14px; font-weight: 600; }
-  .qr-p { font-size: 11px; color: var(--text-muted); }
-
-  /* ── PERFORMANCE CARD ── */
-  .perf-item { margin-bottom: 18px; }
-  .perf-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 7px; }
-  .perf-label { font-size: 13px; color: var(--text-muted); }
-  .perf-val { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 600; }
-  .perf-val.good { color: var(--success); }
-  .perf-val.bad  { color: var(--danger); }
-  .perf-track { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
-  .perf-fill { height: 100%; border-radius: 4px; transition: width .6s ease; }
-  .perf-fill.good { background: var(--success); }
-  .perf-fill.bad  { background: var(--danger); }
-  .perf-stat-row { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
-  .perf-stat-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-soft); font-weight: 700; margin-bottom: 3px; }
-  .perf-stat-val { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; }
-
-  /* ── LOADING / EMPTY ── */
-  .placeholder {
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 64px 24px; text-align: center; color: var(--text-muted);
-  }
-  .spinner { width: 30px; height: 30px; border: 2.5px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; margin-bottom: 14px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── ERROR BANNER ── */
-  .err-box { background: var(--danger-light); border: 1px solid #f5c6c2; border-radius: var(--radius-md); padding: 16px 20px; margin-bottom: 20px; font-size: 13px; color: #7d2020; line-height: 1.6; }
-  .err-box strong { display: block; font-size: 14px; margin-bottom: 6px; color: #5e1515; }
-  .err-box code { background: rgba(192,57,43,.1); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
-
-  /* ── SECTION ── */
+  /* MAIN */
+  .main { max-width: 1320px; margin: 0 auto; padding: 24px 32px 64px; }
   .section { display: none; }
   .section.active { display: block; }
 
-  @media (max-width: 960px) {
-    .main { padding: 18px 18px 48px; }
-    .topbar { padding: 0 18px; }
-    .tabs-row { padding: 0 18px; }
-    .kpi-grid { grid-template-columns: 1fr 1fr; }
-    .cards-row { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 600px) {
-    .kpi-grid { grid-template-columns: 1fr; }
-  }
+  /* FILTER BAR */
+  .filter-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px 20px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px; margin-bottom: 20px; }
+  .fg { display: flex; flex-direction: column; gap: 5px; }
+  .fg label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-soft); }
+  .fg select { font-family: inherit; font-size: 13px; color: var(--text); background: var(--bg); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); padding: 9px 36px 9px 12px; min-width: 180px; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%23517a85' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; transition: border-color .15s, box-shadow .15s; }
+  .fg select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+  .filter-count { margin-left: auto; text-align: right; }
+  .filter-count span { display: block; font-size: 11.5px; color: var(--text-muted); }
+  .filter-count strong { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; color: var(--text); line-height: 1; }
+
+  /* KPI GRID */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px 16px; position: relative; overflow: hidden; transition: box-shadow .2s; }
+  .kpi:hover { box-shadow: 0 4px 18px rgba(11,114,133,.07); }
+  .kpi-bar { position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--kc, var(--primary)); }
+  .kpi-icon { width: 34px; height: 34px; border-radius: 9px; background: var(--kb, var(--primary-light)); display: grid; place-items: center; font-size: 16px; margin-bottom: 12px; }
+  .kpi-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--text-soft); margin-bottom: 5px; }
+  .kpi-value { font-family: 'Fraunces', serif; font-size: 34px; font-weight: 600; color: var(--text); line-height: 1; letter-spacing: -.02em; }
+  .kpi-badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 999px; background: var(--kb, var(--primary-light)); color: var(--kc, var(--primary)); margin-top: 7px; }
+  .kpi.k-total  { --kc: var(--primary); --kb: var(--primary-light); }
+  .kpi.k-active { --kc: var(--success); --kb: var(--success-light); }
+  .kpi.k-expired{ --kc: var(--neutral); --kb: var(--neutral-light); }
+  .kpi.k-dispatched { --kc: var(--accent); --kb: #d5f0ec; }
+
+  /* SECTION TITLE */
+  .section-title { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .section-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
+
+  /* SUMMARY STRIP */
+  .summary-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .sum-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 18px; display: flex; align-items: center; gap: 14px; }
+  .sum-icon { width: 38px; height: 38px; border-radius: 10px; background: var(--sb, var(--primary-light)); display: grid; place-items: center; font-size: 18px; flex-shrink: 0; }
+  .sum-label { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+  .sum-val { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; color: var(--text); line-height: 1.1; }
+  .sum-pct { font-size: 11px; color: var(--sc, var(--primary)); font-weight: 600; }
+
+  /* CARDS */
+  .cards-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+  .cards-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 24px; }
+  .card-full { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 24px; margin-bottom: 18px; }
+  .card-title { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .card-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; }
+
+  /* BREAKDOWN */
+  .breakdown { display: grid; grid-template-columns: 190px 1fr; gap: 22px; align-items: center; }
+  .chart-box { position: relative; height: 190px; }
+  @media (max-width: 680px) { .breakdown { grid-template-columns: 1fr; } }
+
+  /* STATUS LIST */
+  .slist { display: flex; flex-direction: column; gap: 11px; }
+  .si { display: grid; grid-template-columns: 10px 1fr auto; gap: 12px; align-items: center; }
+  .si-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c,var(--primary)); box-shadow: 0 0 0 3px var(--cb,var(--primary-light)); }
+  .si.s-completed   { --c:#2a9d47;  --cb:#e2f5e8; }
+  .si.s-inprogress  { --c:#0b7285;  --cb:#d8eef1; }
+  .si.s-dispatchpend{ --c:#d4860f;  --cb:#fdf0d8; }
+  .si.s-missingdocs { --c:#7c3aed;  --cb:#ede9fe; }
+  .si.s-rejected    { --c:#c0392b;  --cb:#fce8e6; }
+  .si.s-active      { --c:#2a9d47;  --cb:#e2f5e8; }
+  .si.s-expired     { --c:#607d85;  --cb:#e8f0f2; }
+  .si.s-other       { --c:#607d85;  --cb:#e8f0f2; }
+  .si.s-delivered   { --c:#2a9d47;  --cb:#e2f5e8; }
+  .si.s-pending     { --c:#d4860f;  --cb:#fdf0d8; }
+  .si.s-rto         { --c:#c0392b;  --cb:#fce8e6; }
+  .si-mid { display: flex; flex-direction: column; gap: 4px; }
+  .si-name { font-size: 12.5px; font-weight: 500; color: var(--text); }
+  .si-bar { height: 4px; background: var(--bg); border-radius: 2px; overflow: hidden; }
+  .si-fill { height: 100%; background: var(--c,var(--primary)); border-radius: 2px; transition: width .55s cubic-bezier(.4,.1,.2,1); }
+  .si-right { text-align: right; min-width: 80px; }
+  .si-count { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; line-height: 1; }
+  .si-pct { font-size: 10.5px; color: var(--text-muted); margin-top: 2px; }
+
+  /* QR / DRUG LIST */
+  .dist-list { display: flex; flex-direction: column; gap: 10px; max-height: 220px; overflow-y: auto; padding-right: 4px; }
+  .dist-list::-webkit-scrollbar { width: 4px; }
+  .dist-list::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 8px; }
+  .dist-row { display: grid; grid-template-columns: 10px 1fr auto; gap: 10px; align-items: center; }
+  .dist-sw { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .dist-mid { display: flex; flex-direction: column; gap: 3px; }
+  .dist-name { font-size: 12.5px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+  .dist-bar { height: 4px; background: var(--bg); border-radius: 2px; overflow: hidden; }
+  .dist-fill { height: 100%; border-radius: 2px; transition: width .5s ease; }
+  .dist-right { text-align: right; white-space: nowrap; }
+  .dist-n { font-family: 'Fraunces', serif; font-size: 14px; font-weight: 600; }
+  .dist-p { font-size: 10.5px; color: var(--text-muted); }
+
+  /* TRENDLINE */
+  .trend-box { position: relative; height: 240px; }
+
+  /* SUB INDENT */
+  .sub-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--text-soft); margin: 12px 0 7px 22px; }
+  .sub-indent { padding-left: 22px; border-left: 2px solid var(--border); margin-left: 4px; }
+
+  /* PERF */
+  .perf-item { margin-bottom: 16px; }
+  .perf-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .perf-label { font-size: 13px; color: var(--text-muted); }
+  .perf-val { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; }
+  .perf-val.good { color: var(--success); }
+  .perf-val.bad  { color: var(--danger); }
+  .perf-track { height: 7px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+  .perf-fill { height: 100%; border-radius: 4px; transition: width .6s ease; }
+  .perf-fill.good { background: var(--success); }
+  .perf-fill.bad  { background: var(--danger); }
+  .stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-soft); font-weight: 700; margin-bottom: 3px; }
+  .stat-val { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; }
+
+  /* PLACEHOLDER */
+  .placeholder { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; text-align: center; color: var(--text-muted); }
+  .spinner { width: 28px; height: 28px; border: 2.5px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; margin-bottom: 14px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .err-box { background: var(--danger-light); border: 1px solid #f5c6c2; border-radius: var(--radius-md); padding: 16px 20px; margin-bottom: 20px; font-size: 13px; color: #7d2020; line-height: 1.6; }
+  .err-box strong { display: block; font-size: 14px; margin-bottom: 5px; }
+
+  @media (max-width: 1100px) { .kpi-grid { grid-template-columns: repeat(2,1fr); } .cards-row-3 { grid-template-columns: 1fr 1fr; } .summary-strip { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 760px) { .main { padding: 16px 16px 48px; } .topbar,.tabs-row { padding: 0 16px; } .cards-row,.cards-row-3 { grid-template-columns: 1fr; } .kpi-grid { grid-template-columns: 1fr 1fr; } }
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
 <div class="topbar">
-  <div class="topbar-brand">
-    <div class="topbar-logo">M</div>
+  <div class="brand">
+    <div class="brand-logo">M</div>
     <div>
-      <div class="topbar-name">Mysaathi Program</div>
-      <div class="topbar-sub">Client Dashboard · Live Data</div>
+      <div class="brand-name">Mysaathi Program</div>
+      <div class="brand-sub">Client Dashboard · Live Data</div>
     </div>
   </div>
-  <div class="topbar-right">
-    <div class="sync-pill" id="syncPill" onclick="loadAll()">
-      <span class="sync-dot" id="syncDot"></span>
-      <span id="syncText">Connecting…</span>
-    </div>
+  <div class="sync-pill" id="syncPill" onclick="loadAll()">
+    <span class="sync-dot" id="syncDot"></span>
+    <span id="syncText">Connecting…</span>
   </div>
 </div>
 
-<!-- TABS -->
 <div class="tabs-row">
   <button class="tab-btn active" data-tab="patients">🧑‍⚕️ Patient Overview</button>
   <button class="tab-btn" data-tab="logistics">🚚 Logistics Overview</button>
@@ -314,378 +207,513 @@
 <div class="main">
   <div id="errBox"></div>
 
-  <!-- ═══════════ PATIENTS ═══════════ -->
+  <!-- ═══════ PATIENTS ═══════ -->
   <section class="section active" id="section-patients">
     <div class="filter-bar">
       <div class="fg"><label>Purchase Month</label><select id="pMonth"></select></div>
       <div class="fg"><label>Drug Name</label><select id="pDrug"><option value="__all__">All drugs</option></select></div>
-      <div class="filter-count">
-        <strong id="pCount">—</strong>
-        <span>patients match</span>
-      </div>
+      <div class="filter-count"><strong id="pCount">—</strong><span>patients match</span></div>
     </div>
     <div id="pContent"><div class="placeholder"><div class="spinner"></div>Loading patient data…</div></div>
   </section>
 
-  <!-- ═══════════ LOGISTICS ═══════════ -->
+  <!-- ═══════ LOGISTICS ═══════ -->
   <section class="section" id="section-logistics">
     <div class="filter-bar">
       <div class="fg"><label>Month of Dispatch</label><select id="lMonth"></select></div>
       <div class="fg"><label>Product Name</label><select id="lDrug"><option value="__all__">All products</option></select></div>
-      <div class="filter-count">
-        <strong id="lCount">—</strong>
-        <span>orders match</span>
-      </div>
+      <div class="filter-count"><strong id="lCount">—</strong><span>orders match</span></div>
     </div>
     <div id="lContent"><div class="placeholder"><div class="spinner"></div>Loading logistics data…</div></div>
   </section>
 </div>
 
 <script>
-/* ─────────────────────────────────────────
-   DATA SOURCES  (exact published CSV URLs)
-───────────────────────────────────────── */
-const URL_PATIENTS  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQscA-Y05gGsr6xx54awNYgJJnCLoirIf5IKsNHRmLFYyBqtUL1khVmy3cP_L3U0pG1G6vMPPOqiNNO/pub?gid=1310523268&single=true&output=csv';
-const URL_LOGISTICS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQscA-Y05gGsr6xx54awNYgJJnCLoirIf5IKsNHRmLFYyBqtUL1khVmy3cP_L3U0pG1G6vMPPOqiNNO/pub?gid=1879543153&single=true&output=csv';
-const REFRESH_MS    = 5 * 60 * 1000;
+/* ── DATA SOURCES ── */
+const URL_P = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQscA-Y05gGsr6xx54awNYgJJnCLoirIf5IKsNHRmLFYyBqtUL1khVmy3cP_L3U0pG1G6vMPPOqiNNO/pub?gid=1310523268&single=true&output=csv';
+const URL_L = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQscA-Y05gGsr6xx54awNYgJJnCLoirIf5IKsNHRmLFYyBqtUL1khVmy3cP_L3U0pG1G6vMPPOqiNNO/pub?gid=1879543153&single=true&output=csv';
+const REFRESH_MS = 5 * 60 * 1000;
 
-/* ─── EXACT COLUMN NAMES (from headers shared) ─── */
+/* ── EXACT COLUMNS ── */
 const PC = {
-  month:  'Purchase Month',
-  drug:   'Drug Name',
-  status: 'Current Status',
-  qrType: 'QR Type',
+  purchaseMonth: 'Purchase Month',   // month filter
+  drug:          'Drug Name',        // drug filter + bifurcation
+  kitStatus:     'Current Status',   // Col O — Completed/In Progress/etc
+  planStatus:    'Plan expiry date as per retool', // Col P — Active/Expired
+  qrType:        'QR Type',
 };
-const LC = {
-  month:  'Order Delivered Month',
-  drug:   'Product Name',
-  status: 'Status',
+/* We'll detect Col P by looking for "active"/"expired" values dynamically */
+
+const LC = { month: 'Order Delivered Month', drug: 'Product Name', status: 'Status' };
+
+const PALETTE = ['#0b7285','#0fa893','#2a9d47','#d4860f','#7c3aed','#3b82f6','#c0392b','#607d85','#0891b2','#d97706','#6d28d9','#059669'];
+const STATUS_COLORS = {
+  'completed':        '#2a9d47',
+  'in progress':      '#0b7285',
+  'dispatch pending': '#d4860f',
+  'missing docs':     '#7c3aed',
+  'rejected':         '#c0392b',
 };
 
-const PALETTE = ['#0b7285','#0fa893','#2a9d47','#d4860f','#8b5cf6','#3b82f6','#c0392b','#607d85','#0891b2','#d97706','#6d28d9','#059669'];
+let pData=[], lData=[];
+let planStatusCol = null; // detected dynamically
+let charts = {}; // store all chart instances
 
-let pData = [], lData = [];
-let qrChart=null, pStatusChart=null, lStatusChart=null;
-
-/* ─────────────────────────────────────────
-   FETCH + PARSE CSV
-───────────────────────────────────────── */
+/* ── CSV FETCH + PARSE ── */
 async function fetchCSV(url) {
-  const res = await fetch(url + `&_=${Date.now()}`, { redirect: 'follow' });
+  const res = await fetch(url + `&_=${Date.now()}`, { redirect:'follow' });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const txt = await res.text();
-  if (!txt || txt.trim().startsWith('<')) throw new Error('Sheet returned HTML — check publish settings');
+  if (!txt || txt.trim().startsWith('<')) throw new Error('Received HTML — check sheet publish settings');
   return parseCSV(txt);
 }
 
 function parseCSV(raw) {
-  if (raw.charCodeAt(0) === 0xFEFF) raw = raw.slice(1);
-  const rows = []; let cur = []; let f = ''; let q = false;
-  for (let i = 0; i < raw.length; i++) {
-    const c = raw[i];
-    if (q) {
-      if (c === '"') { if (raw[i+1] === '"') { f += '"'; i++; } else q = false; }
-      else f += c;
-    } else {
-      if (c === '"') { q = true; }
-      else if (c === ',') { cur.push(f); f = ''; }
-      else if (c === '\r') {}
-      else if (c === '\n') { cur.push(f); rows.push(cur); cur = []; f = ''; }
-      else f += c;
-    }
+  if (raw.charCodeAt(0)===0xFEFF) raw=raw.slice(1);
+  const rows=[]; let cur=[]; let f=''; let q=false;
+  for (let i=0;i<raw.length;i++) {
+    const c=raw[i];
+    if (q) { if(c==='"'){if(raw[i+1]==='"'){f+='"';i++;}else q=false;}else f+=c; }
+    else { if(c==='"')q=true; else if(c===','){cur.push(f);f='';}else if(c==='\r'){}else if(c==='\n'){cur.push(f);rows.push(cur);cur=[];f='';}else f+=c; }
   }
-  if (f || cur.length) { cur.push(f); rows.push(cur); }
-  if (!rows.length) return { cols: [], rows: [] };
-  const cols = rows[0].map(c => c.trim());
-  const data = [];
-  for (let r = 1; r < rows.length; r++) {
-    if (rows[r].every(c => !c.trim())) continue;
-    const obj = {};
-    cols.forEach((col, i) => { obj[col] = (rows[r][i] || '').trim(); });
+  if(f||cur.length){cur.push(f);rows.push(cur);}
+  if(!rows.length) return {cols:[],rows:[]};
+  const cols=rows[0].map(c=>c.trim());
+  const data=[];
+  for(let r=1;r<rows.length;r++){
+    if(rows[r].every(c=>!c.trim())) continue;
+    const obj={};
+    cols.forEach((col,i)=>{obj[col]=(rows[r][i]||'').trim();});
     data.push(obj);
   }
-  return { cols, rows: data };
+  return {cols,rows:data};
 }
 
-/* ─────────────────────────────────────────
-   UTILITIES
-───────────────────────────────────────── */
-function fmtN(n) { return (n||0).toLocaleString('en-IN'); }
-function pct(a, b) { return b ? ((a/b)*100).toFixed(1)+'%' : '0.0%'; }
-function pctNum(a, b) { return b ? +((a/b)*100).toFixed(1) : 0; }
-function uniq(arr) {
-  return [...new Set(arr.map(v=>String(v).trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+/* ── NORMALISE: lowercase + trim for all comparisons ── */
+function norm(v) { return String(v||'').toLowerCase().trim(); }
+
+/* ── CASE-INSENSITIVE DEDUP (e.g. AlterMe = Alterme) ── */
+function normKey(v) { return norm(v); }
+
+/* Build a display map: normKey -> canonical display name (first seen) */
+function buildDisplayMap(arr) {
+  const map = {};
+  arr.forEach(v => { const k=normKey(v); if(k && !map[k]) map[k]=String(v).trim(); });
+  return map;
 }
 
-/* Parse month values — handles "Jan 2025", "January 2025", "2025-01", "01/2025", full dates */
-function parseMonth(val) {
-  if (!val) return null;
-  const s = String(val).trim();
-  if (!s) return null;
-  const mnames = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+function groupByNorm(rows, col) {
+  const counts={}, display={};
+  rows.forEach(r=>{
+    const raw=String(r[col]||'').trim();
+    const k=normKey(raw);
+    if(!k) return;
+    counts[k]=(counts[k]||0)+1;
+    if(!display[k]) display[k]=raw; // first-seen casing
+  });
+  return Object.entries(counts).map(([k,cnt])=>({key:k,label:display[k],count:cnt})).sort((a,b)=>b.count-a.count);
+}
 
-  // "Jan 2025" / "January 2025"
-  let m = s.match(/^([A-Za-z]+)[\s\-,\/]+(\d{4})$/);
-  if (m) {
-    const dt = new Date(`${m[1]} 1, ${m[2]}`);
-    if (!isNaN(dt)) return key(dt);
+/* ── DETECT PLAN STATUS COLUMN ── */
+function detectPlanStatusCol(cols, rows) {
+  // Look for a column where values are mostly "active"/"expired"
+  for (const col of cols) {
+    if (col === PC.kitStatus) continue;
+    const vals = rows.map(r=>norm(r[col])).filter(Boolean);
+    const hits = vals.filter(v=>v==='active'||v==='expired'||v.includes('active')||v.includes('expired'));
+    if (hits.length > vals.length * 0.3) return col;
   }
-  // "2025-01" / "2025/01"
-  m = s.match(/^(\d{4})[-\/](\d{1,2})$/);
-  if (m) return key(new Date(+m[1], +m[2]-1, 1));
-  // "01/2025" / "01-2025"
-  m = s.match(/^(\d{1,2})[-\/](\d{4})$/);
-  if (m) return key(new Date(+m[2], +m[1]-1, 1));
-  // DD/MM/YYYY
-  m = s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
-  if (m) { const dt = new Date(+m[3], +m[2]-1, +m[1]); if (!isNaN(dt)) return key(dt); }
-  // Any parseable date
-  const d = new Date(s);
-  if (!isNaN(d)) return key(d);
-  return { key: s, label: s };
-
-  function key(dt) {
-    if (!dt || isNaN(dt)) return null;
-    return {
-      key: `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`,
-      label: dt.toLocaleString('en-US', { month: 'short', year: 'numeric' })
-    };
-  }
+  return null;
 }
 
-/* ─────────────────────────────────────────
-   PATIENT STATUS CLASSIFICATION
-   Exact values from "Current Status" column
-───────────────────────────────────────── */
-function classifyPatient(v) {
-  const s = String(v||'').toLowerCase().trim();
-  if (!s) return 'unknown';
-  if (/inactive|in[-\s]*active|lapsed|churned|dropped|discontinued|stopped|expired/.test(s)) return 'inactive';
-  if (/active|enrolled|ongoing|engaged|running/.test(s)) return 'active';
-  return 'unknown';
-}
-
-/* ─────────────────────────────────────────
-   LOGISTICS STATUS CLASSIFICATION
-───────────────────────────────────────── */
-function classifyLogistics(v) {
-  const s = String(v||'').toLowerCase().trim();
-  if (!s) return 'other';
-  if (/\bdelivered\b|completed|received/.test(s)) return 'delivered';
-  if (/\brto\b|return.*origin/.test(s)) return 'rto';
-  if (/pending|transit|dispatched|shipped|ofd|out.*delivery|booked|manifest|picked|processing/.test(s)) return 'pending';
+/* ── CLASSIFY LOGISTICS STATUS ── */
+function classifyLog(v) {
+  const s=norm(v);
+  if(!s) return 'other';
+  if(/\bdelivered\b|completed|received/.test(s)) return 'delivered';
+  if(/\brto\b|return.*origin/.test(s)) return 'rto';
+  if(/pending|transit|dispatched|shipped|ofd|out.*delivery|booked|manifest|picked|processing/.test(s)) return 'pending';
   return 'other';
 }
 
-/* ─────────────────────────────────────────
-   POPULATE FILTERS
-───────────────────────────────────────── */
+/* ── PARSE MONTH ── */
+function parseMonth(val) {
+  if(!val) return null;
+  const s=String(val).trim(); if(!s) return null;
+  let m;
+  m=s.match(/^([A-Za-z]+)[\s\-,\/]+(\d{4})$/);
+  if(m){const dt=new Date(`${m[1]} 1, ${m[2]}`);if(!isNaN(dt))return mk(dt);}
+  m=s.match(/^(\d{4})[-\/](\d{1,2})$/);
+  if(m)return mk(new Date(+m[1],+m[2]-1,1));
+  m=s.match(/^(\d{1,2})[-\/](\d{4})$/);
+  if(m)return mk(new Date(+m[2],+m[1]-1,1));
+  m=s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
+  if(m){const dt=new Date(+m[3],+m[2]-1,+m[1]);if(!isNaN(dt))return mk(dt);}
+  const d=new Date(s);if(!isNaN(d))return mk(d);
+  return {key:s,label:s};
+  function mk(dt){return{key:`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`,label:dt.toLocaleString('en-US',{month:'short',year:'numeric'})};}
+}
+
+/* ── POPULATE FILTERS ── */
 function populateFilters(prefix, data, monthCol, drugCol) {
-  const mSel = document.getElementById(prefix+'Month');
-  const dSel = document.getElementById(prefix+'Drug');
+  const mSel=document.getElementById(prefix+'Month');
+  const dSel=document.getElementById(prefix+'Drug');
 
-  const mMap = new Map();
-  data.forEach(r => { const m = parseMonth(r[monthCol]); if (m) mMap.set(m.key, m.label); });
-  const mEntries = [...mMap.entries()].sort((a,b) => a[0].localeCompare(b[0]));
+  const mMap=new Map();
+  data.forEach(r=>{const m=parseMonth(r[monthCol]);if(m)mMap.set(m.key,m.label);});
+  const mEntries=[...mMap.entries()].sort((a,b)=>a[0].localeCompare(b[0]));
 
-  mSel.innerHTML = '';
-  if (!mEntries.length) {
-    mSel.innerHTML = '<option value="__all__">All months</option>';
-  } else {
-    mEntries.forEach(([k, lbl]) => {
-      const o = document.createElement('option'); o.value = k; o.textContent = lbl; mSel.appendChild(o);
-    });
-    mSel.value = mEntries[mEntries.length-1][0]; // default = most recent
-  }
+  mSel.innerHTML='<option value="__all__">All Months</option>';
+  mEntries.forEach(([k,lbl])=>{const o=document.createElement('option');o.value=k;o.textContent=lbl;mSel.appendChild(o);});
+  // default = most recent month
+  if(mEntries.length) mSel.value=mEntries[mEntries.length-1][0];
 
-  const drugs = uniq(data.map(r => r[drugCol]));
-  dSel.innerHTML = `<option value="__all__">${prefix==='p'?'All drugs':'All products'}</option>`;
-  drugs.forEach(d => { const o = document.createElement('option'); o.value = d; o.textContent = d; dSel.appendChild(o); });
+  // Drug — case-insensitive dedup
+  const drugMap=buildDisplayMap(data.map(r=>r[drugCol]));
+  const drugEntries=Object.entries(drugMap).sort((a,b)=>a[1].localeCompare(b[1]));
+  dSel.innerHTML=`<option value="__all__">${prefix==='p'?'All drugs':'All products'}</option>`;
+  drugEntries.forEach(([k,label])=>{const o=document.createElement('option');o.value=k;o.textContent=label;dSel.appendChild(o);});
 }
 
 function filtered(data, monthCol, drugCol, mVal, dVal) {
-  return data.filter(r => {
-    if (mVal && mVal !== '__all__') {
-      const m = parseMonth(r[monthCol]);
-      if (!m || m.key !== mVal) return false;
-    }
-    if (dVal && dVal !== '__all__') {
-      if (r[drugCol] !== dVal) return false;
-    }
+  return data.filter(r=>{
+    if(mVal&&mVal!=='__all__'){const m=parseMonth(r[monthCol]);if(!m||m.key!==mVal)return false;}
+    if(dVal&&dVal!=='__all__'){if(normKey(r[drugCol])!==dVal)return false;}
     return true;
   });
 }
 
-/* ─────────────────────────────────────────
-   RENDER PATIENTS
-───────────────────────────────────────── */
+/* ── DESTROY CHART HELPER ── */
+function destroyChart(key) { if(charts[key]){charts[key].destroy();delete charts[key];} }
+
+function donut(id, labels, data, colors) {
+  destroyChart(id);
+  const ctx=document.getElementById(id);
+  if(!ctx) return;
+  charts[id]=new Chart(ctx,{
+    type:'doughnut',
+    data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'64%',plugins:{legend:{display:false},tooltip:{backgroundColor:'#0d2329',padding:10,cornerRadius:8,titleFont:{family:'Inter',size:12,weight:'600'},bodyFont:{family:'Inter',size:12},displayColors:true,callbacks:{label:ctx=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return ` ${ctx.label}: ${ctx.parsed.toLocaleString('en-IN')} (${((ctx.parsed/t)*100).toFixed(1)}%)`;}}}}}
+  });
+}
+
+/* ── RENDER PATIENTS ── */
 function renderPatients() {
-  const mVal = document.getElementById('pMonth').value;
-  const dVal = document.getElementById('pDrug').value;
-  const rows = filtered(pData, PC.month, PC.drug, mVal, dVal);
-  document.getElementById('pCount').textContent = fmtN(rows.length);
+  const mVal=document.getElementById('pMonth').value;
+  const dVal=document.getElementById('pDrug').value;
+  const rows=filtered(pData, PC.purchaseMonth, PC.drug, mVal, dVal);
+  document.getElementById('pCount').textContent=fmtN(rows.length);
+  const el=document.getElementById('pContent');
+  if(!rows.length){el.innerHTML=`<div class="placeholder">No patient records match the selected filters.</div>`;return;}
 
-  const el = document.getElementById('pContent');
-  if (!rows.length) { el.innerHTML = `<div class="placeholder">No patient records match the selected filters.</div>`; return; }
+  const total=rows.length;
 
-  // Status
-  const sc = { active:0, inactive:0, unknown:0 };
-  rows.forEach(r => sc[classifyPatient(r[PC.status])]++);
-  const total = rows.length;
-  const active = sc.active, inactive = sc.inactive, unkn = sc.unknown;
+  /* Kit Status (Col O) bifurcation — case-insensitive */
+  const kitGroups=groupByNorm(rows, PC.kitStatus);
 
-  // QR Type
-  const qrMap = {};
-  rows.forEach(r => { const v = r[PC.qrType] || 'Unspecified'; qrMap[v] = (qrMap[v]||0)+1; });
-  const qrDist = Object.entries(qrMap).sort((a,b)=>b[1]-a[1]);
+  /* Plan Status (detected col P) */
+  let planActive=0, planExpired=0, planOther=0;
+  if(planStatusCol){
+    rows.forEach(r=>{
+      const v=norm(r[planStatusCol]);
+      if(v==='active'||v.includes('active'))planActive++;
+      else if(v==='expired'||v.includes('expired'))planExpired++;
+      else planOther++;
+    });
+  }
 
-  el.innerHTML = `
+  /* Drug bifurcation — case-insensitive */
+  const drugGroups=groupByNorm(rows, PC.drug);
+
+  /* QR Type */
+  const qrGroups=groupByNorm(rows, PC.qrType);
+
+  /* Kit Dispatched count */
+  const kitDispatched=kitGroups.filter(g=>g.key==='completed'||g.key.includes('completed')).reduce((s,g)=>s+g.count,0);
+  const completionRate=pctNum(kitDispatched,total);
+  const activeRate=planStatusCol?pctNum(planActive,total):null;
+
+  /* Monthly trendline data (all data, filtered by drug only) */
+  const trendRows=dVal==='__all__'?pData:pData.filter(r=>normKey(r[PC.drug])===dVal);
+  const trendMap=new Map();
+  trendRows.forEach(r=>{const m=parseMonth(r[PC.purchaseMonth]);if(m)trendMap.set(m.key,{label:m.label,count:(trendMap.get(m.key)?.count||0)+1});});
+  const trendEntries=[...trendMap.entries()].sort((a,b)=>a[0].localeCompare(b[0]));
+
+  el.innerHTML=`
+    <!-- KPI ROW -->
     <div class="kpi-grid">
       <div class="kpi k-total">
-        <div class="kpi-accent"></div>
-        <div class="kpi-icon">👥</div>
+        <div class="kpi-bar"></div><div class="kpi-icon">👥</div>
         <div class="kpi-label">Total Patients</div>
         <div class="kpi-value">${fmtN(total)}</div>
-        <div class="kpi-sub">Filtered selection</div>
+        <div class="kpi-badge">Filtered selection</div>
       </div>
+      <div class="kpi k-dispatched">
+        <div class="kpi-bar"></div><div class="kpi-icon">📦</div>
+        <div class="kpi-label">Kit Dispatched</div>
+        <div class="kpi-value">${fmtN(kitDispatched)}</div>
+        <div class="kpi-badge">${pct(kitDispatched,total)} completed</div>
+      </div>
+      ${planStatusCol?`
       <div class="kpi k-active">
-        <div class="kpi-accent"></div>
-        <div class="kpi-icon">✅</div>
-        <div class="kpi-label">Active Patients</div>
-        <div class="kpi-value">${fmtN(active)}</div>
-        <div class="kpi-badge">${pct(active,total)} of total</div>
+        <div class="kpi-bar"></div><div class="kpi-icon">✅</div>
+        <div class="kpi-label">Plan Active</div>
+        <div class="kpi-value">${fmtN(planActive)}</div>
+        <div class="kpi-badge">${pct(planActive,total)} of total</div>
       </div>
-      <div class="kpi k-inactive">
-        <div class="kpi-accent"></div>
-        <div class="kpi-icon">⏸️</div>
-        <div class="kpi-label">Inactive Patients</div>
-        <div class="kpi-value">${fmtN(inactive)}</div>
-        <div class="kpi-badge">${pct(inactive,total)} of total</div>
+      <div class="kpi k-expired">
+        <div class="kpi-bar"></div><div class="kpi-icon">⏸️</div>
+        <div class="kpi-label">Plan Expired</div>
+        <div class="kpi-value">${fmtN(planExpired)}</div>
+        <div class="kpi-badge">${pct(planExpired,total)} of total</div>
+      </div>` : `
+      <div class="kpi k-active">
+        <div class="kpi-bar"></div><div class="kpi-icon">✅</div>
+        <div class="kpi-label">Completed</div>
+        <div class="kpi-value">${fmtN(kitGroups.find(g=>g.key==='completed')?.count||0)}</div>
+        <div class="kpi-badge">${pct(kitGroups.find(g=>g.key==='completed')?.count||0,total)}</div>
+      </div>
+      <div class="kpi k-expired">
+        <div class="kpi-bar"></div><div class="kpi-icon">🔄</div>
+        <div class="kpi-label">In Progress</div>
+        <div class="kpi-value">${fmtN(kitGroups.find(g=>g.key.includes('progress'))?.count||0)}</div>
+        <div class="kpi-badge">${pct(kitGroups.find(g=>g.key.includes('progress'))?.count||0,total)}</div>
+      </div>`}
+    </div>
+
+    <!-- SUMMARY STRIP -->
+    <div class="section-title">Program Summary</div>
+    <div class="section-sub">Key highlights for the selected period</div>
+    <div class="summary-strip">
+      <div class="sum-card" style="--sb:#d8eef1;">
+        <div class="sum-icon" style="--sb:#d8eef1;">📋</div>
+        <div>
+          <div class="sum-label">Completion Rate</div>
+          <div class="sum-val">${pct(kitDispatched,total)}</div>
+          <div class="sum-pct" style="color:var(--accent)">${fmtN(kitDispatched)} of ${fmtN(total)} patients</div>
+        </div>
+      </div>
+      <div class="sum-card" style="--sb:#e2f5e8;">
+        <div class="sum-icon" style="--sb:#e2f5e8;">💊</div>
+        <div>
+          <div class="sum-label">Drug Types Active</div>
+          <div class="sum-val">${drugGroups.length}</div>
+          <div class="sum-pct" style="color:var(--success)">across ${fmtN(total)} patients</div>
+        </div>
+      </div>
+      <div class="sum-card" style="--sb:#fdf0d8;">
+        <div class="sum-icon" style="--sb:#fdf0d8;">⚠️</div>
+        <div>
+          <div class="sum-label">Pending / Issues</div>
+          <div class="sum-val">${fmtN(kitGroups.filter(g=>!g.key.includes('completed')).reduce((s,g)=>s+g.count,0))}</div>
+          <div class="sum-pct" style="color:var(--warning)">${pct(kitGroups.filter(g=>!g.key.includes('completed')).reduce((s,g)=>s+g.count,0),total)} need attention</div>
+        </div>
+      </div>
+      <div class="sum-card" style="--sb:#ede9fe;">
+        <div class="sum-icon" style="--sb:#ede9fe;">🔍</div>
+        <div>
+          <div class="sum-label">Missing Docs / Rejected</div>
+          <div class="sum-val">${fmtN(kitGroups.filter(g=>g.key.includes('missing')||g.key.includes('rejected')).reduce((s,g)=>s+g.count,0))}</div>
+          <div class="sum-pct" style="color:var(--purple)">${pct(kitGroups.filter(g=>g.key.includes('missing')||g.key.includes('rejected')).reduce((s,g)=>s+g.count,0),total)} of total</div>
+        </div>
       </div>
     </div>
+
+    <!-- BIFURCATION CARDS -->
+    <div class="section-title">Status Bifurcation</div>
+    <div class="section-sub">Patient distribution by program status, plan status, drug, and QR type</div>
+
     <div class="cards-row">
+      <!-- Kit / Program Status -->
       <div class="card">
-        <div class="card-title">Patient Status Bifurcation</div>
-        <div class="card-sub">Active vs inactive distribution</div>
+        <div class="card-title">Program Status (Col O)</div>
+        <div class="card-sub">Distribution by current program stage</div>
         <div class="breakdown">
-          <div class="chart-box"><canvas id="pStatusChart"></canvas></div>
-          <div class="status-list">
-            ${si('s-active','Active',active,total)}
-            ${si('s-inactive','Inactive',inactive,total)}
-            ${unkn>0?si('s-other','Unspecified',unkn,total):''}
+          <div class="chart-box"><canvas id="kitStatusChart"></canvas></div>
+          <div class="slist">
+            ${kitGroups.map(g=>{
+              const cls=g.key.includes('complet')&&!g.key.includes('dispatch')?'s-completed':g.key.includes('progress')?'s-inprogress':g.key.includes('dispatch')?'s-dispatchpend':g.key.includes('missing')?'s-missingdocs':g.key.includes('reject')?'s-rejected':'s-other';
+              return siHTML(cls, g.label, g.count, total);
+            }).join('')}
           </div>
         </div>
       </div>
+
+      <!-- Plan Active / Expired -->
+      <div class="card">
+        <div class="card-title">Plan Status (Col P)</div>
+        <div class="card-sub">Active vs expired patient plans</div>
+        ${planStatusCol ? `
+          <div class="breakdown">
+            <div class="chart-box"><canvas id="planStatusChart"></canvas></div>
+            <div class="slist">
+              ${siHTML('s-active','Active',planActive,total)}
+              ${siHTML('s-expired','Expired',planExpired,total)}
+              ${planOther>0?siHTML('s-other','Other',planOther,total):''}
+            </div>
+          </div>
+        ` : `<div style="color:var(--text-muted);font-size:13px;padding:20px 0;">Plan Status column not detected in sheet. Ensure a column contains 'Active'/'Expired' values.</div>`}
+      </div>
+    </div>
+
+    <div class="cards-row">
+      <!-- Drug Bifurcation -->
+      <div class="card">
+        <div class="card-title">Drug Bifurcation</div>
+        <div class="card-sub">Patient distribution by drug name</div>
+        <div class="breakdown">
+          <div class="chart-box"><canvas id="drugChart"></canvas></div>
+          <div class="dist-list">
+            ${drugGroups.map((g,i)=>{
+              const c=PALETTE[i%PALETTE.length];
+              return `<div class="dist-row">
+                <span class="dist-sw" style="background:${c}"></span>
+                <div class="dist-mid">
+                  <div class="dist-name" title="${g.label}">${g.label}</div>
+                  <div class="dist-bar"><div class="dist-fill" style="background:${c};width:${pctNum(g.count,total)}%"></div></div>
+                </div>
+                <div class="dist-right"><div class="dist-n">${fmtN(g.count)}</div><div class="dist-p">${pctNum(g.count,total)}%</div></div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- QR Type -->
       <div class="card">
         <div class="card-title">QR Type Distribution</div>
         <div class="card-sub">Patient split by QR type</div>
-        ${qrDist.length ? `
+        ${qrGroups.length?`
           <div class="breakdown">
-            <div class="chart-box"><canvas id="qrTypeChart"></canvas></div>
-            <div class="qr-list">
-              ${qrDist.map(([name,cnt],i)=>{
-                const c=PALETTE[i%PALETTE.length], p=pctNum(cnt,total);
-                return `<div class="qr-row">
-                  <span class="qr-sw" style="--sw:${c};background:${c};"></span>
-                  <div class="qr-mid">
-                    <div class="qr-name" title="${name}">${name}</div>
-                    <div class="qr-bar"><div class="qr-bar-fill" style="background:${c};width:${p}%"></div></div>
+            <div class="chart-box"><canvas id="qrChart"></canvas></div>
+            <div class="dist-list">
+              ${qrGroups.map((g,i)=>{
+                const c=PALETTE[i%PALETTE.length];
+                return `<div class="dist-row">
+                  <span class="dist-sw" style="background:${c}"></span>
+                  <div class="dist-mid">
+                    <div class="dist-name" title="${g.label}">${g.label}</div>
+                    <div class="dist-bar"><div class="dist-fill" style="background:${c};width:${pctNum(g.count,total)}%"></div></div>
                   </div>
-                  <div class="qr-right"><div class="qr-n">${fmtN(cnt)}</div><div class="qr-p">${p}%</div></div>
+                  <div class="dist-right"><div class="dist-n">${fmtN(g.count)}</div><div class="dist-p">${pctNum(g.count,total)}%</div></div>
                 </div>`;
               }).join('')}
             </div>
           </div>
-        ` : `<div class="placeholder" style="padding:30px">No QR Type data available.</div>`}
+        `:`<div style="color:var(--text-muted);font-size:13px;padding-top:12px;">No QR Type data found.</div>`}
       </div>
+    </div>
+
+    <!-- TRENDLINE -->
+    <div class="card-full">
+      <div class="card-title">Month-on-Month Trend</div>
+      <div class="card-sub">Total patients enrolled per purchase month${dVal!=='__all__'?' · filtered by drug':' · all drugs'}</div>
+      <div class="trend-box"><canvas id="trendChart"></canvas></div>
     </div>
   `;
 
-  // Status donut
-  if (pStatusChart) pStatusChart.destroy();
-  pStatusChart = new Chart(document.getElementById('pStatusChart'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Active','Inactive',...(unkn>0?['Unspecified']:[])],
-      datasets: [{ data: [active,inactive,...(unkn>0?[unkn]:[])], backgroundColor: ['#2a9d47','#607d85','#c8d8dc'], borderWidth: 2, borderColor: '#fff' }]
-    },
-    options: donutOpts()
-  });
+  /* ── DRAW CHARTS ── */
+  // Kit Status donut
+  donut('kitStatusChart',
+    kitGroups.map(g=>g.label),
+    kitGroups.map(g=>g.count),
+    kitGroups.map(g=>g.key.includes('complet')&&!g.key.includes('dispatch')?'#2a9d47':g.key.includes('progress')?'#0b7285':g.key.includes('dispatch')?'#d4860f':g.key.includes('missing')?'#7c3aed':g.key.includes('reject')?'#c0392b':'#607d85')
+  );
+
+  // Plan Status donut
+  if(planStatusCol){
+    const pLabels=['Active','Expired',...(planOther>0?['Other']:[])];
+    const pData=[planActive,planExpired,...(planOther>0?[planOther]:[])];
+    const pColors=['#2a9d47','#607d85','#c8d8dc'];
+    donut('planStatusChart',pLabels,pData,pColors);
+  }
+
+  // Drug donut
+  donut('drugChart',
+    drugGroups.map(g=>g.label),
+    drugGroups.map(g=>g.count),
+    drugGroups.map((_,i)=>PALETTE[i%PALETTE.length])
+  );
 
   // QR donut
-  if (qrChart) qrChart.destroy();
-  if (qrDist.length) {
-    qrChart = new Chart(document.getElementById('qrTypeChart'), {
-      type: 'doughnut',
-      data: {
-        labels: qrDist.map(d=>d[0]),
-        datasets: [{ data: qrDist.map(d=>d[1]), backgroundColor: qrDist.map((_,i)=>PALETTE[i%PALETTE.length]), borderWidth: 2, borderColor: '#fff' }]
+  if(qrGroups.length){
+    donut('qrChart',qrGroups.map(g=>g.label),qrGroups.map(g=>g.count),qrGroups.map((_,i)=>PALETTE[i%PALETTE.length]));
+  }
+
+  // Trendline
+  destroyChart('trendChart');
+  const tCtx=document.getElementById('trendChart');
+  if(tCtx&&trendEntries.length){
+    charts['trendChart']=new Chart(tCtx,{
+      type:'line',
+      data:{
+        labels:trendEntries.map(e=>e[1].label),
+        datasets:[{
+          label:'Patients Enrolled',
+          data:trendEntries.map(e=>e[1].count),
+          borderColor:'#0b7285', backgroundColor:'rgba(11,114,133,.08)',
+          borderWidth:2.5, pointRadius:5, pointBackgroundColor:'#0b7285',
+          pointHoverRadius:7, tension:0.35, fill:true
+        }]
       },
-      options: donutOpts()
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{backgroundColor:'#0d2329',padding:10,cornerRadius:8,titleFont:{family:'Inter',size:12,weight:'600'},bodyFont:{family:'Inter',size:12}}},
+        scales:{
+          x:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{family:'Inter',size:11},color:'#517a85'}},
+          y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{family:'Inter',size:11},color:'#517a85'},beginAtZero:true}
+        }
+      }
     });
   }
 }
 
-/* ─────────────────────────────────────────
-   RENDER LOGISTICS
-───────────────────────────────────────── */
+/* ── RENDER LOGISTICS ── */
 function renderLogistics() {
-  const mVal = document.getElementById('lMonth').value;
-  const dVal = document.getElementById('lDrug').value;
-  const rows = filtered(lData, LC.month, LC.drug, mVal, dVal);
-  document.getElementById('lCount').textContent = fmtN(rows.length);
+  const mVal=document.getElementById('lMonth').value;
+  const dVal=document.getElementById('lDrug').value;
+  const rows=filtered(lData, LC.month, LC.drug, mVal, dVal);
+  document.getElementById('lCount').textContent=fmtN(rows.length);
+  const el=document.getElementById('lContent');
+  if(!rows.length){el.innerHTML=`<div class="placeholder">No logistics records match the selected filters.</div>`;return;}
 
-  const el = document.getElementById('lContent');
-  if (!rows.length) { el.innerHTML = `<div class="placeholder">No logistics records match the selected filters.</div>`; return; }
+  const total=rows.length;
+  const sc={delivered:0,pending:0,rto:0,other:0};
+  rows.forEach(r=>sc[classifyLog(r[LC.status])]++);
+  const delivered=sc.delivered, rto=sc.rto;
+  const otherBucket=sc.other+sc.pending;
+  const pending=rto+otherBucket;
 
-  const sc = { delivered:0, pending:0, rto:0, other:0 };
-  rows.forEach(r => sc[classifyLogistics(r[LC.status])]++);
-  const total = rows.length;
-  const delivered = sc.delivered;
-  const rto = sc.rto;
-  const otherBucket = sc.other + sc.pending;
-  const pending = rto + otherBucket;
+  // Trendline for logistics
+  const trendRows=dVal==='__all__'?lData:lData.filter(r=>normKey(r[LC.drug])===dVal);
+  const trendMap=new Map();
+  trendRows.forEach(r=>{const m=parseMonth(r[LC.month]);if(m)trendMap.set(m.key,{label:m.label,count:(trendMap.get(m.key)?.count||0)+1});});
+  const trendEntries=[...trendMap.entries()].sort((a,b)=>a[0].localeCompare(b[0]));
 
-  el.innerHTML = `
+  el.innerHTML=`
     <div class="kpi-grid">
-      <div class="kpi k-total">
-        <div class="kpi-accent"></div>
-        <div class="kpi-icon">📦</div>
-        <div class="kpi-label">Total Orders</div>
-        <div class="kpi-value">${fmtN(total)}</div>
-        <div class="kpi-sub">Filtered selection</div>
-      </div>
-      <div class="kpi k-delivered">
-        <div class="kpi-accent"></div>
-        <div class="kpi-icon">✅</div>
-        <div class="kpi-label">Delivered</div>
-        <div class="kpi-value">${fmtN(delivered)}</div>
-        <div class="kpi-badge">${pct(delivered,total)} of total</div>
-      </div>
-      <div class="kpi k-pending">
-        <div class="kpi-accent"></div>
-        <div class="kpi-icon">🕐</div>
-        <div class="kpi-label">Pending</div>
-        <div class="kpi-value">${fmtN(pending)}</div>
-        <div class="kpi-badge">${pct(pending,total)} of total</div>
-      </div>
+      <div class="kpi k-total"><div class="kpi-bar"></div><div class="kpi-icon">📦</div><div class="kpi-label">Total Orders</div><div class="kpi-value">${fmtN(total)}</div><div class="kpi-badge">Filtered</div></div>
+      <div class="kpi k-active"><div class="kpi-bar"></div><div class="kpi-icon">✅</div><div class="kpi-label">Delivered</div><div class="kpi-value">${fmtN(delivered)}</div><div class="kpi-badge">${pct(delivered,total)} of total</div></div>
+      <div class="kpi k-expired"><div class="kpi-bar"></div><div class="kpi-icon">🕐</div><div class="kpi-label">Pending</div><div class="kpi-value">${fmtN(pending)}</div><div class="kpi-badge">${pct(pending,total)} of total</div></div>
+      <div class="kpi k-dispatched"><div class="kpi-bar"></div><div class="kpi-icon">↩️</div><div class="kpi-label">RTO</div><div class="kpi-value">${fmtN(rto)}</div><div class="kpi-badge">${pct(rto,pending)} of pending</div></div>
     </div>
+
     <div class="cards-row">
       <div class="card">
         <div class="card-title">Order Status Bifurcation</div>
-        <div class="card-sub">Delivery breakdown across all orders</div>
+        <div class="card-sub">Breakdown of all order statuses</div>
         <div class="breakdown">
           <div class="chart-box"><canvas id="lStatusChart"></canvas></div>
           <div>
-            <div class="status-list">
-              ${si('s-delivered','Delivered',delivered,total)}
-              ${si('s-pending','Pending',pending,total)}
+            <div class="slist">
+              ${siHTML('s-delivered','Delivered',delivered,total)}
+              ${siHTML('s-pending','Pending',pending,total)}
             </div>
             <div class="sub-label">Within Pending</div>
             <div class="sub-indent">
-              <div class="status-list">
-                ${si('s-rto','RTO (Return to Origin)',rto,pending,'of pending')}
-                ${si('s-other','Others',otherBucket,pending,'of pending')}
+              <div class="slist">
+                ${siHTML('s-rto','RTO (Return to Origin)',rto,pending,'of pending')}
+                ${siHTML('s-other','Others',otherBucket,pending,'of pending')}
               </div>
             </div>
           </div>
@@ -695,137 +723,85 @@ function renderLogistics() {
         <div class="card-title">Delivery Performance</div>
         <div class="card-sub">Delivery success & return rates</div>
         <div class="perf-item">
-          <div class="perf-head">
-            <span class="perf-label">Delivery rate</span>
-            <span class="perf-val good">${pct(delivered,total)}</span>
-          </div>
+          <div class="perf-head"><span class="perf-label">Delivery rate</span><span class="perf-val good">${pct(delivered,total)}</span></div>
           <div class="perf-track"><div class="perf-fill good" style="width:${pctNum(delivered,total)}%"></div></div>
         </div>
         <div class="perf-item">
-          <div class="perf-head">
-            <span class="perf-label">RTO rate <small style="color:var(--text-soft)">(of pending)</small></span>
-            <span class="perf-val bad">${pct(rto,pending)}</span>
-          </div>
+          <div class="perf-head"><span class="perf-label">RTO rate <small style="color:var(--text-soft)">(of pending)</small></span><span class="perf-val bad">${pct(rto,pending)}</span></div>
           <div class="perf-track"><div class="perf-fill bad" style="width:${pctNum(rto,pending)}%"></div></div>
         </div>
-        <div class="perf-stat-row">
-          <div>
-            <div class="perf-stat-label">Delivered</div>
-            <div class="perf-stat-val">${fmtN(delivered)}</div>
-          </div>
-          <div>
-            <div class="perf-stat-label">Not delivered</div>
-            <div class="perf-stat-val">${fmtN(pending)}</div>
-          </div>
-          <div>
-            <div class="perf-stat-label">RTO</div>
-            <div class="perf-stat-val">${fmtN(rto)}</div>
-          </div>
-          <div>
-            <div class="perf-stat-label">Others</div>
-            <div class="perf-stat-val">${fmtN(otherBucket)}</div>
-          </div>
+        <div class="stat-grid">
+          <div><div class="stat-label">Delivered</div><div class="stat-val">${fmtN(delivered)}</div></div>
+          <div><div class="stat-label">Pending</div><div class="stat-val">${fmtN(pending)}</div></div>
+          <div><div class="stat-label">RTO</div><div class="stat-val">${fmtN(rto)}</div></div>
+          <div><div class="stat-label">Others</div><div class="stat-val">${fmtN(otherBucket)}</div></div>
         </div>
       </div>
     </div>
+
+    <div class="card-full">
+      <div class="card-title">Month-on-Month Trend</div>
+      <div class="card-sub">Total orders dispatched per month${dVal!=='__all__'?' · filtered by product':' · all products'}</div>
+      <div class="trend-box"><canvas id="lTrendChart"></canvas></div>
+    </div>
   `;
 
-  if (lStatusChart) lStatusChart.destroy();
-  lStatusChart = new Chart(document.getElementById('lStatusChart'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Delivered','RTO','Others'],
-      datasets: [{ data: [delivered, rto, otherBucket], backgroundColor: ['#2a9d47','#c0392b','#d4860f'], borderWidth: 2, borderColor: '#fff' }]
-    },
-    options: donutOpts()
-  });
-}
+  donut('lStatusChart',['Delivered','RTO','Others'],[delivered,rto,otherBucket],['#2a9d47','#c0392b','#d4860f']);
 
-/* ─────────────────────────────────────────
-   SHARED HELPERS
-───────────────────────────────────────── */
-function si(cls, name, count, total, denomLabel='of total') {
-  const p = pctNum(count, total);
-  return `<div class="si ${cls}">
-    <span class="si-dot"></span>
-    <div class="si-mid">
-      <div class="si-name">${name}</div>
-      <div class="si-bar"><div class="si-bar-fill" style="width:${p}%"></div></div>
-    </div>
-    <div class="si-right">
-      <div class="si-count">${fmtN(count)}</div>
-      <div class="si-pct">${p}% ${denomLabel}</div>
-    </div>
-  </div>`;
-}
-
-function donutOpts() {
-  return {
-    responsive: true, maintainAspectRatio: false, cutout: '64%',
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: '#0d2329', padding: 10, cornerRadius: 8,
-        titleFont: { family: 'Inter', size: 12, weight: '600' },
-        bodyFont: { family: 'Inter', size: 12 },
-        displayColors: true,
-        callbacks: {
-          label: ctx => {
-            const t = ctx.dataset.data.reduce((a,b)=>a+b,0);
-            return ` ${ctx.label}: ${ctx.parsed.toLocaleString('en-IN')} (${((ctx.parsed/t)*100).toFixed(1)}%)`;
-          }
-        }
-      }
-    }
-  };
-}
-
-/* ─────────────────────────────────────────
-   LOAD
-───────────────────────────────────────── */
-async function loadAll() {
-  const dot  = document.getElementById('syncDot');
-  const txt  = document.getElementById('syncText');
-  const eBox = document.getElementById('errBox');
-  txt.textContent = 'Syncing…'; dot.classList.remove('err'); eBox.innerHTML = '';
-
-  try {
-    const [p, l] = await Promise.all([fetchCSV(URL_PATIENTS), fetchCSV(URL_LOGISTICS)]);
-    pData = p.rows; lData = l.rows;
-
-    populateFilters('p', pData, PC.month, PC.drug);
-    populateFilters('l', lData, LC.month, LC.drug);
-    renderPatients(); renderLogistics();
-
-    const t = new Date();
-    txt.textContent = `Live · ${t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
-  } catch(e) {
-    console.error(e);
-    dot.classList.add('err'); txt.textContent = 'Connection failed';
-    eBox.innerHTML = `<div class="err-box"><strong>Unable to load data</strong>${e.message||String(e)}</div>`;
-    document.getElementById('pContent').innerHTML = '';
-    document.getElementById('lContent').innerHTML = '';
+  destroyChart('lTrendChart');
+  const ltCtx=document.getElementById('lTrendChart');
+  if(ltCtx&&trendEntries.length){
+    charts['lTrendChart']=new Chart(ltCtx,{
+      type:'line',
+      data:{labels:trendEntries.map(e=>e[1].label),datasets:[{label:'Orders',data:trendEntries.map(e=>e[1].count),borderColor:'#0fa893',backgroundColor:'rgba(15,168,147,.08)',borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#0fa893',pointHoverRadius:7,tension:0.35,fill:true}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#0d2329',padding:10,cornerRadius:8,titleFont:{family:'Inter',size:12,weight:'600'},bodyFont:{family:'Inter',size:12}}},scales:{x:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{family:'Inter',size:11},color:'#517a85'}},y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{family:'Inter',size:11},color:'#517a85'},beginAtZero:true}}}
+    });
   }
 }
 
-/* ─────────────────────────────────────────
-   EVENTS
-───────────────────────────────────────── */
-document.querySelectorAll('.tab-btn').forEach(b => {
-  b.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
+/* ── SHARED HELPERS ── */
+function fmtN(n){return(n||0).toLocaleString('en-IN');}
+function pct(a,b){return b?((a/b)*100).toFixed(1)+'%':'0.0%';}
+function pctNum(a,b){return b?+((a/b)*100).toFixed(1):0;}
+
+function siHTML(cls,name,count,total,denomLabel='of total'){
+  const p=pctNum(count,total);
+  return `<div class="si ${cls}"><span class="si-dot"></span><div class="si-mid"><div class="si-name">${name}</div><div class="si-bar"><div class="si-fill" style="width:${p}%"></div></div></div><div class="si-right"><div class="si-count">${fmtN(count)}</div><div class="si-pct">${p}% ${denomLabel}</div></div></div>`;
+}
+
+/* ── LOAD ── */
+async function loadAll(){
+  const dot=document.getElementById('syncDot'),txt=document.getElementById('syncText'),eBox=document.getElementById('errBox');
+  txt.textContent='Syncing…';dot.classList.remove('err');eBox.innerHTML='';
+  try{
+    const [p,l]=await Promise.all([fetchCSV(URL_P),fetchCSV(URL_L)]);
+    pData=p.rows; lData=l.rows;
+    planStatusCol=detectPlanStatusCol(p.cols,p.rows);
+    populateFilters('p',pData,PC.purchaseMonth,PC.drug);
+    populateFilters('l',lData,LC.month,LC.drug);
+    renderPatients(); renderLogistics();
+    const t=new Date();
+    txt.textContent=`Live · ${t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
+  }catch(e){
+    console.error(e);dot.classList.add('err');txt.textContent='Connection failed';
+    eBox.innerHTML=`<div class="err-box"><strong>Unable to load data</strong>${e.message||String(e)}</div>`;
+  }
+}
+
+/* ── EVENTS ── */
+document.querySelectorAll('.tab-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
     b.classList.add('active');
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
     document.getElementById('section-'+b.dataset.tab).classList.add('active');
   });
 });
-document.getElementById('pMonth').addEventListener('change', renderPatients);
-document.getElementById('pDrug').addEventListener('change', renderPatients);
-document.getElementById('lMonth').addEventListener('change', renderLogistics);
-document.getElementById('lDrug').addEventListener('change', renderLogistics);
+['pMonth','pDrug'].forEach(id=>document.getElementById(id).addEventListener('change',renderPatients));
+['lMonth','lDrug'].forEach(id=>document.getElementById(id).addEventListener('change',renderLogistics));
 
 loadAll();
-setInterval(loadAll, REFRESH_MS);
+setInterval(loadAll,REFRESH_MS);
 </script>
 </body>
 </html>
